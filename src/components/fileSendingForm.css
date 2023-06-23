@@ -1,0 +1,34 @@
+.form-container {
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #000;
+    box-sizing: border-box;
+  }
+  
+  .form-container h2 {
+    margin-bottom: 10px;
+  }
+  
+  .form-container label {
+    margin-bottom: 10px;
+  }
+  
+  .form-container input {
+    margin-bottom: 10px;
+  }
+  
+  .form-container button {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .add-form{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    max-width: 25%;
+    margin: 16px;
+    padding: 8px;
+  }
+  
