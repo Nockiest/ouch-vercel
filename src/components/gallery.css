@@ -9,11 +9,12 @@
     padding-bottom: 100%; /* Maintain aspect ratio */
     /* overflow: hidden; */
   }
-  .image-header{
-    max-height: 78px;
-    overflow: "hidden";
+  .image-header {
+    height: 78px;
+    overflow: hidden;
+    border: 1px solid black;
+    text-overflow: ellipsis;
   }
-  
   .image {
     position: absolute;
     top: 0;

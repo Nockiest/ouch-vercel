@@ -1,46 +1,49 @@
 import React, { useEffect, useState } from "react";
 import "./gallery.css";
 
-const Gallery = () => {
-    const [storedImages, setStoredImages] = useState([]);
-  
-    useEffect(() => {
-      fetch("/gallery")
-        .then((response) => response.json())
-        .then((data) => {
-          const images = data.map((file) => ({
-            filename: file.filename,
-            downloadURL: file.downloadURL,
-          }));
-          setStoredImages(images);
-        })
-        .catch((error) => {
-          console.error("Error fetching images:", error);
-        });
-    }, []);
-  
-    return (
-      <div>
-        <h2>Gallery</h2>
-        {/* Render the stored images */}
-        <div className="gallery"> 
-        {storedImages.map((image) => (
-          <div className="image-src"> 
-          <h3 className="image-header">{image.filename}</h3>
-          <div className="image-item" key={image.filename}>
-             
-             
-            <img className="image" src={image.downloadURL} alt={image.filename} />
-            
-          </div>
-          </div>
-        ))}
-        </div>
-      </div>
-    );
+const Gallery = ({ storedImages, searchedTerm }) => {
+  const extractNameAndCategory = (filename) => {
+    // Extract name and category from the filename
+    const nameWithCategory = filename.split('.')[0];
+    const parts = nameWithCategory.split('_');
+    const name = parts[0].substring(parts[0].indexOf('/') + 1);
+    const category = parts[1];
+    const header = parts.slice(2).join('_'); // Extract the part after "xyz"
+    return { name, category, header };
   };
-  
-  export default Gallery;
+
+  // Filter the storedImages based on the searched term
+  const filteredImages = storedImages.filter((image) => {
+    const { name } = extractNameAndCategory(image.filename);
+    return name.toLowerCase().includes(searchedTerm.toLowerCase());
+  });
+
+  return (
+    <div>
+      <h2>Gallery</h2>
+      {/* Render the filtered images */}
+      <div className="gallery">
+        {filteredImages.map((image) => {
+          const { name, category } = extractNameAndCategory(image.filename);
+
+          return (
+            <div className="image-src" key={image.filename}>
+              <h3 className="image-header">{name}</h3> {/* Display the header */}
+              <h4 className="image-category">{category}</h4>
+              <div className="image-item">
+                <img className="image" src={image.downloadURL} alt={image.filename} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export default Gallery;
+
+
 
 
 // app.get("/gallery", async (req, res) => {
