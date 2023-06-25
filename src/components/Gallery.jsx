@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from "react";
 import "./gallery.css";
-
-const Gallery = ({ user, storedImages, searchedTerm }) => {
+import { downloadURLFinder } from "../firebase";
  
-  console.log(user)
+
+const Gallery = ({ selectedCategory, categories, setCategories, user, storedImages, searchedTerm }) => {
   const displayNameWithoutSpaces = user.displayName.replace(/\s/g, '');
   const userCredentials = `${displayNameWithoutSpaces} ${user.email}`;
-console.log(userCredentials)
+  const [downloadURL, setDownloadURL] = useState(null);
   const extractNameAndCategory = (filename) => {
-    // Extract name and category from the filename
+    console.log(filename)
     const nameWithCategory = filename.split('.')[0];
-
     const parts = nameWithCategory.split('_');
-    console.log(parts, userCredentials);
-    const name = parts[0].substring(parts[0].indexOf('/') + 1);
+    const name = parts[0].substring(parts[0].indexOf('/') + 1).replace(/%/g, ' ');
     const category = parts[1];
-    const header = parts.slice(2).join('_')+".cz"; // Extract the part after "xyz"
-   console.log(header === userCredentials, header, userCredentials )
-    return { name, category, header };
+    const header = parts.slice(2).join('_') + '.cz'; // Extract the part after "xyz"
+    return { name, category, header, filename };
   };
 
   // Filter the storedImages based on the searched term
@@ -25,29 +22,63 @@ console.log(userCredentials)
     const { name } = extractNameAndCategory(image.filename);
     return name.toLowerCase().includes(searchedTerm.toLowerCase());
   });
-  
+
+  const handleImageClick = async (downloadURL) => {
+    try {
+      const response = await fetch(`/download?downloadURL=${encodeURIComponent(downloadURL)}`);
+    //  const response = downloadURLFinder(downloadURL)
+      console.log(response)
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        setDownloadURL(url); // Store the download URL in state
+        console.log(downloadURL)
+      } else {
+        console.error('File download failed.');
+      }
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
+
+  // useEffect(() => {
+  //   const uniqueCategories = [...new Set(filteredImages.map((image) => extractNameAndCategory(image.filename).category))];
+  //   setCategories(uniqueCategories);
+  // }, [filteredImages]);
+  useEffect(() => {
+    // Clear the download URL when the component unmounts
+    return () => {
+      URL.revokeObjectURL(downloadURL);
+    };
+  }, [downloadURL]);
   return (
     <div>
       <h2>Gallery</h2>
       {/* Render the filtered images */}
       <div className="gallery">
         {filteredImages.map((image) => {
-          const { name, category, header } = extractNameAndCategory(image.filename);
+          const { name, category, header,filename } = extractNameAndCategory(image.filename);
 
           return (
-             userCredentials == header && (
-              <div className="image-src" key={image.filename}>
-                <h3 className="image-header">{name}</h3> {/* Display the header */}
-                <h4 className="image-category">{category}</h4>
+            // userCredentials === header
+            0 <1 && (
+              <div className="image-src" key={image.filename} onClick={() => handleImageClick(image.filename)}>
                 <div className="image-item">
                   <img className="image" src={image.downloadURL} alt={image.filename} />
                 </div>
-                <p>{header}</p>
+                <h4 className="image-category">{category}</h4>
+                <h3 className="image-header">{name}</h3>
+                { image.downloadURL && (
+        <div>
+        <a href={image.downloadURL} download>Download Image</a>
+      </div>
+      )}
               </div>
             )
           );
         })}
       </div>
+       
     </div>
   );
 };

@@ -1,11 +1,23 @@
-// import React from 'react';
-// import { Link } from 'react-router-dom';
+import React from 'react';
+import LoginButton from './LoginButton';
+import "./Navbar.css"
 
-// const Navbar = () => {
-//   return (
-//     <nav>
-//       <ul>
-//         <li>
+const Navbar = ({ user, setUser }) => {
+  return (
+    <nav className="navbar">
+     <h1>logo</h1>
+      <h1>Ondřejův mrak</h1>
+      <LoginButton user={user} setUser={setUser} />
+    </nav>
+  );
+};
+
+export default Navbar;
+
+
+
+
+{/* <li> */}
 //           <Link to="/">Home</Link>
 //         </li>
 //         <li>
@@ -14,9 +26,3 @@
 //         <li>
 //           <Link to="/about">About</Link>
 //         </li>
-//       </ul>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
