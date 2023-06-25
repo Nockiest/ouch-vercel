@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from "react";
 import "./gallery.css";
 
-const Gallery = ({ storedImages, searchedTerm }) => {
+const Gallery = ({ user, storedImages, searchedTerm }) => {
+ 
+  console.log(user)
+  const displayNameWithoutSpaces = user.displayName.replace(/\s/g, '');
+  const userCredentials = `${displayNameWithoutSpaces} ${user.email}`;
+console.log(userCredentials)
   const extractNameAndCategory = (filename) => {
     // Extract name and category from the filename
     const nameWithCategory = filename.split('.')[0];
+
     const parts = nameWithCategory.split('_');
+    console.log(parts, userCredentials);
     const name = parts[0].substring(parts[0].indexOf('/') + 1);
     const category = parts[1];
-    const header = parts.slice(2).join('_'); // Extract the part after "xyz"
+    const header = parts.slice(2).join('_')+".cz"; // Extract the part after "xyz"
+   console.log(header === userCredentials, header, userCredentials )
     return { name, category, header };
   };
 
@@ -17,23 +25,26 @@ const Gallery = ({ storedImages, searchedTerm }) => {
     const { name } = extractNameAndCategory(image.filename);
     return name.toLowerCase().includes(searchedTerm.toLowerCase());
   });
-
+  
   return (
     <div>
       <h2>Gallery</h2>
       {/* Render the filtered images */}
       <div className="gallery">
         {filteredImages.map((image) => {
-          const { name, category } = extractNameAndCategory(image.filename);
+          const { name, category, header } = extractNameAndCategory(image.filename);
 
           return (
-            <div className="image-src" key={image.filename}>
-              <h3 className="image-header">{name}</h3> {/* Display the header */}
-              <h4 className="image-category">{category}</h4>
-              <div className="image-item">
-                <img className="image" src={image.downloadURL} alt={image.filename} />
+             userCredentials == header && (
+              <div className="image-src" key={image.filename}>
+                <h3 className="image-header">{name}</h3> {/* Display the header */}
+                <h4 className="image-category">{category}</h4>
+                <div className="image-item">
+                  <img className="image" src={image.downloadURL} alt={image.filename} />
+                </div>
+                <p>{header}</p>
               </div>
-            </div>
+            )
           );
         })}
       </div>

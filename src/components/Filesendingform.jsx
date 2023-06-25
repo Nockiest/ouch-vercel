@@ -3,9 +3,9 @@ import "./fileSendingForm.css"
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const FileSendingForm = ({ onFileUpload }) => {
+const FileSendingForm = ({ onFileUpload, user}) => {
   const [filename, setFilename] = useState('');
-  const [user, setUser] = useState('');
+  // const [user, setUser] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState("");
@@ -17,9 +17,12 @@ const FileSendingForm = ({ onFileUpload }) => {
     try {
       const modifiedFileName = filename.replace(/\s/g, '%'); // Replace whitespace with %
       const formData = new FormData();
+      const displayNameWithoutSpaces = user.displayName.replace(/\s/g, '');
+
       formData.append('file', selectedFile);
       formData.append('filename', modifiedFileName);
-      formData.append('user', user);
+      
+      formData.append('user', `${displayNameWithoutSpaces} ${user.email}`);
       formData.append('category', category);
       formData.append('description', description);
   
@@ -51,7 +54,7 @@ const FileSendingForm = ({ onFileUpload }) => {
           onChange={(e) => setFilename(e.target.value)}
         />
       </div>
-
+{/* 
       <div>
         <label htmlFor="user">User:</label>
         <input
@@ -63,7 +66,7 @@ const FileSendingForm = ({ onFileUpload }) => {
           onChange={(e) => setUser(e.target.value)}
         />
       </div>
-        
+         */}
       <div>
         <label htmlFor="file">File:</label>
         <input

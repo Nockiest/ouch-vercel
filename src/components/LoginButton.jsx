@@ -1,14 +1,17 @@
 import GoogleButton from "../partials/GoogleSignInButton";
 import React, { useState } from "react";
 import { signInWithGoogle, auth } from "../firebase";
-export default function LoginButton() {
+export default function LoginButton({user, setUser} ) {
     const [errorMessage, setErrorMessage] = useState("");
-    const [user, setUser] = useState("")
+ 
     const handleSignInWithGoogle = async () => {
         try {
           const result = await signInWithGoogle();
           console.log(result)
-          setUser(result.user);
+          setUser(prevUser => {
+            console.log(result.user);
+            return result.user;
+          });
         } catch (error) {
           setErrorMessage(`Error signing in with Google. ${error}`);
         }

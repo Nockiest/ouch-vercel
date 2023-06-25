@@ -4,10 +4,11 @@ import Gallery from './components/Gallery';
 import FileSendingForm from './components/FileSendingForm';
 import SearchBar from './components/SearchBar';
 import LoginButton from './components/LoginButton';
-import AuthComponent from './Authentication';
+ 
 const App = () => {
   const [storedImages, setStoredImages] = useState([]);
   const [searchedTerm, setSearchedTerm] = useState('');
+  const [user, setUser] = useState(null)
   useEffect(() => {
     fetchImages();
   }, []);
@@ -56,13 +57,18 @@ const App = () => {
   };
   return (
     <div>
-      <h1>My App</h1>
-      <LoginButton />
+      <h1>Ondřejův Mrak</h1>
+      <LoginButton user={user} setUser={setUser} />
       {/* <AuthComponent /> */}
+      
+      {user && 
+      <div>
       <p>{searchedTerm}</p>
-      <FileSendingForm onFileUpload={handleFileUpload} />
+      <FileSendingForm user={user}onFileUpload={handleFileUpload} />
       <SearchBar onSearch={handleSearch} />
-      <Gallery storedImages={storedImages} searchedTerm={searchedTerm} />
+      <Gallery user={user}storedImages={storedImages} searchedTerm={searchedTerm} />
+      </div>
+      }
     
     </div> 
   );
