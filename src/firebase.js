@@ -42,9 +42,9 @@ const colRef = collection(db, 'files');
 export { db,colRef, auth, provider, storage };
 
 export const signInWithGoogle = () => {
-  signInWithPopup(auth, provider)
+ return signInWithPopup(auth, provider)
     .then((result) => {
-      console.log(result);
+      console.log(result, "xyz");
       const name = result.user.displayName;
       const email = result.user.email;
       const profilePic = result.user.photoURL;
@@ -52,6 +52,7 @@ export const signInWithGoogle = () => {
       localStorage.setItem("name", name);
       localStorage.setItem("email", email);
       localStorage.setItem("profilePic", profilePic);
+      return result
     //   window.location.reload();
     })
     .catch((error) => {

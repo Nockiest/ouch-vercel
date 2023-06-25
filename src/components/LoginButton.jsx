@@ -1,45 +1,45 @@
 import GoogleButton from "../partials/GoogleSignInButton";
 import React, { useState } from "react";
-// import { signInWithGoogle, auth } from "../firebase";
+import { signInWithGoogle, auth } from "../firebase";
 export default function LoginButton() {
     const [errorMessage, setErrorMessage] = useState("");
-    const [user, setUser] = useState(undefined)
-    // const handleSignInWithGoogle = async () => {
-    //     try {
-    //       const result = await signInWithGoogle();
-    //       const user = result.user;
-    //       setUser(user);
-    //     } catch (error) {
-    //       setErrorMessage('Error signing in with Google.');
-    //     }
-    //   };
+    const [user, setUser] = useState("")
+    const handleSignInWithGoogle = async () => {
+        try {
+          const result = await signInWithGoogle();
+          console.log(result)
+          setUser(result.user);
+        } catch (error) {
+          setErrorMessage(`Error signing in with Google. ${error}`);
+        }
+      };
 
-    //   const handleSignOut = async () => {
-    //     try {
+      const handleSignOut = async () => {
+        try {
    
-    //       localStorage.clear();  
-    //       console.log(localStorage.getItem('name'), localStorage.getItem('profilePic'),"xxx")
-    //       window.location.reload();
-    //       await auth.signOut();
+          localStorage.clear();  
+          console.log(localStorage.getItem('name'), localStorage.getItem('profilePic'),"xxx")
+          window.location.reload();
+          await auth.signOut();
           
           
-    //     } catch (error) {
-    //       // Handle sign out error
-    //       console.error('Error signing out:', error);
-    //     }
-    //   };
-    //   const logoutButtonStyles = {
-    //     backgroundColor: '#fff',
-    //     color: '#000',
-    //     borderRadius: '5px',
-    //     padding: '10px 20px',
-    //     border: 'none',
-    //     cursor: 'pointer',
-    //   };
+        } catch (error) {
+          // Handle sign out error
+          console.error('Error signing out:', error);
+        }
+      };
+      const logoutButtonStyles = {
+        backgroundColor: '#fff',
+        color: '#000',
+        borderRadius: '5px',
+        padding: '10px 20px',
+        border: 'none',
+        cursor: 'pointer',
+      };
     return (
       <div className="loginSecttion">
     
-        {/* {!user ? (
+        {!user ? (
           <div>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
             <GoogleButton onClick={handleSignInWithGoogle}/>
@@ -56,7 +56,7 @@ export default function LoginButton() {
           ) : (
             <strong>Logged in as: {user.displayName}</strong>
           )}
-        </p> */}
+        </p>
          
       </div>
     );

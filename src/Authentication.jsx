@@ -16,43 +16,43 @@ const AuthComponent = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSignUp = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // User signed up successfully
-        const user = userCredential.user;
-        console.log('Signed up:', user);
-      })
-      .catch((error) => {
-        // Handle sign up error
-        console.log('Sign up error:', error);
-      });
-  };
+  // const handleSignUp = () => {
+  //   createUserWithEmailAndPassword(auth, email, password)
+  //     .then((userCredential) => {
+  //       // User signed up successfully
+  //       const user = userCredential.user;
+  //       console.log('Signed up:', user);
+  //     })
+  //     .catch((error) => {
+  //       // Handle sign up error
+  //       console.log('Sign up error:', error);
+  //     });
+  // };
 
-  const handleSignIn = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // User signed in successfully
-        const user = userCredential.user;
-        console.log('Signed in:', user);
-      })
-      .catch((error) => {
-        // Handle sign in error
-        console.log('Sign in error:', error);
-      });
-  };
+  // const handleSignIn = () => {
+  //   signInWithEmailAndPassword(auth, email, password)
+  //     .then((userCredential) => {
+  //       // User signed in successfully
+  //       const user = userCredential.user;
+  //       console.log('Signed in:', user);
+  //     })
+  //     .catch((error) => {
+  //       // Handle sign in error
+  //       console.log('Sign in error:', error);
+  //     });
+  // };
 
-  const handleSignOut = () => {
-    signOut(auth)
-      .then(() => {
-        // User signed out successfully
-        console.log('Signed out');
-      })
-      .catch((error) => {
-        // Handle sign out error
-        console.log('Sign out error:', error);
-      });
-  };
+  // const handleSignOut = () => {
+  //   signOut(auth)
+  //     .then(() => {
+  //       // User signed out successfully
+  //       console.log('Signed out');
+  //     })
+  //     .catch((error) => {
+  //       // Handle sign out error
+  //       console.log('Sign out error:', error);
+  //     });
+  // };
 
   return (
     <div>
