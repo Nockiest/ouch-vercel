@@ -1,26 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Gallery from './components/Gallery';
-import FileSendingForm from './components/FileSendingForm';
+ 
+import FileSendingForm from './components/Filesendingform';
 import SearchBar from './components/SearchBar';
 import LoginButton from './components/LoginButton';
 import Navbar from './components/Navbar';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Categories from './components/Categories';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
- import { storage } from './firebase';
+ import { storage, colRef } from './firebase';
 import {serverTimestamp, addDoc, collection } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
+
 const App = () => {
   const [storedImages, setStoredImages] = useState([]);
   const [searchedTerm, setSearchedTerm] = useState('');
   const [user, setUser] = useState(null)
   const [categories, setCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState(null)
-  const [imageUpload, setImageUpload] = useState("");
+ 
   useEffect(() => {
     fetchImages();
+    const storedUserName = localStorage.getItem('name');
+    const storedEmail = localStorage.getItem('email');
+    const storedProfilePic = localStorage.getItem('profilePic');
+    if (storedUserName && storedProfilePic && storedEmail) {
+      setUser({ displayName: storedUserName, photoURL: storedProfilePic, email: storedEmail });
+    }
   }, []);
-
+   
   const fetchImages = () => {
     fetch('/gallery')
       .then((response) => response.json())
@@ -38,36 +48,36 @@ const App = () => {
 
   const handleFileUpload = async (formData) => {
     try {
-      for (const [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-      }
-      // const response = await axios.post('/add', formData, {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   },
-      // });
-     
-      const uploadFile = (formData) => {
-        const { filename, user, description, category } = formData;
-        const augmentedCategory = category || "default" 
-          const imgName =  `${filename}_${augmentedCategory}_${user}_${uuidv4()}` ;
-      //  const imgName = uuidv4()
+      const uploadFile = async (formData) => { // Add 'async' here
+      //  console.log(user);
+        const { filename, user, description, category, subcategory,imageUpload } = formData;
+        const augmentedCategory = category || "default";
+     console.log(user)
+        const imgName = `${filename}_${augmentedCategory}_${subcategory}_${user}_${uuidv4()}`;
+        console.log(imgName);
         const filesRef = ref(storage, `files/${imgName}`);
-      
-        uploadBytes(filesRef, imageUpload).then((snapshot) => {
+  
+        await uploadBytes(filesRef, imageUpload).then((snapshot) => {
           getDownloadURL(snapshot.ref).then((url) => {
             console.log(url);
           });
         });
+        await addDoc(colRef, { // Add 'await' here
+          imgName,
+          user,
+          timeStamp: serverTimestamp(),
+          description
+        });
       };
-      uploadFile(formData)
-      // console.log('File upload response:', response.data);
-      // fetchImages(); // Fetch images again after successful upload
+      await uploadFile(formData); // Add 'await' here
+  
+      fetchImages(); // Fetch images again after successful upload
     } catch (error) {
       console.error('Error uploading file:', error);
       // Handle the error, display an error message, etc.
     }
   };
+  
   const handleSearch = (term) => {
     const trimmedTerm = term.trim(); // Trim leading and trailing white spaces
   
@@ -77,11 +87,12 @@ const App = () => {
     setSearchedTerm(finalTerm);
     console.log(finalTerm);
   };
+
+
+
   return (
     <div>
-      <Navbar  user={user} setUser={setUser}/>
-  
-    
+      <Navbar  user={user} setUser={setUser}/> 
       {user && 
       <div>
         <div>
@@ -89,7 +100,7 @@ const App = () => {
           <FileSendingForm 
           user={user}
           onFileUpload={handleFileUpload}
-          setImageUpload={setImageUpload} />
+          />
           <SearchBar onSearch={handleSearch} />
           <Categories
             setSelectedCategory={setSelectedCategory}
@@ -115,3 +126,10 @@ const App = () => {
 };
 
 export default App;
+
+
+    // const response = await axios.post('/add', formData, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //   },
+      // })

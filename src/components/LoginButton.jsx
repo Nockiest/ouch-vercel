@@ -8,10 +8,9 @@ export default function LoginButton({user, setUser} ) {
         try {
           const result = await signInWithGoogle();
           console.log(result)
-          setUser(prevUser => {
-            console.log(result.user);
-            return result.user;
-          });
+          const { displayName, photoURL, email } = result.user;
+
+          setUser({ displayName, photoURL, email });
         } catch (error) {
           setErrorMessage(`Error signing in with Google. ${error}`);
         }
@@ -19,13 +18,9 @@ export default function LoginButton({user, setUser} ) {
 
       const handleSignOut = async () => {
         try {
-   
           localStorage.clear();  
-          console.log(localStorage.getItem('name'), localStorage.getItem('profilePic'),"xxx")
           window.location.reload();
           await auth.signOut();
-          
-          
         } catch (error) {
           // Handle sign out error
           console.error('Error signing out:', error);

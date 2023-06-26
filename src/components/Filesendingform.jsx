@@ -3,38 +3,64 @@ import "./fileSendingForm.css"
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const FileSendingForm = ({ setImageUpload, onFileUpload, user }) => {
+const FileSendingForm = ({  onFileUpload, user }) => {
   const [filename, setFilename] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [subcategory, setSubcategory] = useState(''); // New state for subcategory
-
+  const [imageUpload,setImageUpload] = useState(null)
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      const modifiedFileName = filename.replace(/\s/g, '%');
-      const formData = new FormData();
-      const displayNameWithoutSpaces = user.displayName.replace(/\s/g, '');
+      const sanitizedFormData = {};
+      let needsReplacing = false;
 
-      formData.append('file', selectedFile);
-      formData.append('filename', modifiedFileName);
-      formData.append('user', `${displayNameWithoutSpaces} ${user.email}`);
-      formData.append('category', category);
-      formData.append('subcategory', subcategory); // Append subcategory to form data
-      formData.append('description', description);
+      for (const field in formData) {
+        const value = formData[field];
+        let sanitizedValue = value;
 
-      await onFileUpload(formData);
+        if (typeof value === 'string') {
+          console.log(value.match(/[_/]/g), value.match(/\s/g));
+
+          if (value.match(/[_/]/g)) {
+            sanitizedValue = value.replace(/[_/]/g, '');
+            needsReplacing = field;
+      } //dont allow / and _ in the form data
+
+          if (value.match(/\s/g)) {
+            sanitizedValue = sanitizedValue.replace(/\s/g, '%');
+            // needsReplacing = field;
+          }
+        }
+
+        sanitizedFormData[field] = sanitizedValue;
+      }
+
+      if (needsReplacing) {
+        alert(
+          `Make sure to remove "_" and "/" characters from the ${needsReplacing} field.`
+        );
+      } else {
+        console.log("doesnt need", needsReplacing)
+        await onFileUpload(sanitizedFormData);
+        setFilename('');
+        setImageUpload(null);
+        setDescription('');
+        setCategory('');
+        setSubcategory('');
+      }
+
+       
     } catch (error) {
       console.error('Error uploading file:', error);
     }
   };
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setSelectedFile(file);
-  };
+ 
+  // const handleFileChange = (event) => {
+  //   const file = event.target.files[0];
+  //   setSelectedFile(file);
+  // };
 
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
@@ -45,6 +71,15 @@ const FileSendingForm = ({ setImageUpload, onFileUpload, user }) => {
   };
 
   const showSubcategoryField = category.trim() !== ''; // Check if category is not empty
+
+  const formData = {
+    filename,
+    imageUpload,
+    description,
+    category,
+    subcategory,
+    user: user.displayName.replace(/\s/g, '')
+  };
 
   return (
     <form className="add-form" onSubmit={handleSubmit}>
@@ -103,7 +138,7 @@ const FileSendingForm = ({ setImageUpload, onFileUpload, user }) => {
       <input type="submit" value="Upload" />
     </form>
   );
-};
+}; 
 
 export default FileSendingForm;
  
