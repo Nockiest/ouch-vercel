@@ -1,38 +1,54 @@
 import React, { useEffect, useState } from "react";
 import "./gallery.css";
-import { downloadURLFinder } from "../firebase";
+import { downloadURLFinder, colRef } from "../firebase";
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+// Add Font Awesome icons to the library
  
 
+import { onSnapshot, doc, deleteDoc } from "firebase/firestore";
+library.add(fas);
 const Gallery = ({ selectedCategory, categories, setCategories, user, storedImages, searchedTerm }) => {
   const displayNameWithoutSpaces = user.displayName.replace(/\s/g, '');
   const userCredentials = `${displayNameWithoutSpaces} ${user.email}`;
   const [downloadURL, setDownloadURL] = useState(null);
+  const [postData, setPostData] = useState([])
+
   const extractNameAndCategory = (filename) => {
-    console.log(filename)
+    // console.log(filename)
     const nameWithCategory = filename.split('.')[0];
     const parts = nameWithCategory.split('_');
+    // console.log(parts)
     const name = parts[0].substring(parts[0].indexOf('/') + 1).replace(/%/g, ' ');
     const category = parts[1];
-    const header = parts.slice(2).join('_') + '.cz'; // Extract the part after "xyz"
-    return { name, category, header, filename };
+    const subcategory = parts[2]
+    const header = parts.slice(3).join('_') + '.cz'; // Extract the part after "xyz"
+    return { name, category, subcategory, header, filename };
   };
-
   // Filter the storedImages based on the searched term
   const filteredImages = storedImages.filter((image) => {
+    // console.log(storedImages)
     const { name } = extractNameAndCategory(image.filename);
-    return name.toLowerCase().includes(searchedTerm.toLowerCase());
+     return name//  name.toLowerCase().includes(searchedTerm.toLowerCase());
   });
 
+  const addDescriptionToImage = (imageName) => {
+    const trimmedFilename = imageName.replace(/^.+\//, '')
+    const post = postData.find((post) => post.imgName === trimmedFilename);
+    return post ? post.description : '';
+  };
   const handleImageClick = async (downloadURL) => {
     try {
       const response = await fetch(`/download?downloadURL=${encodeURIComponent(downloadURL)}`);
     //  const response = downloadURLFinder(downloadURL)
-      console.log(response)
+      // console.log(response)
       if (response.ok) {
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         setDownloadURL(url); // Store the download URL in state
-        console.log(downloadURL)
+        // console.log(downloadURL)
       } else {
         console.error('File download failed.');
       }
@@ -40,6 +56,35 @@ const Gallery = ({ selectedCategory, categories, setCategories, user, storedImag
       console.error('Error downloading file:', error);
     }
   };
+  const handleDelete = async (filename) => {
+    const trimmedFilename = filename.replace(/^.+\//, '');   // Trim the slash and anything before it
+    // console.log(filename);
+    // Perform the deletion logic here
+    try {
+     
+      console.log(trimmedFilename)
+      // Delete image data from Firebase database using the trimmed filename or any unique identifier
+      await deleteDoc(doc(colRef, trimmedFilename));
+      // Fetch images again after deletion
+      // fetchImages();
+    } catch (error) {
+      console.error('Error deleting image:', error);
+    }
+  };
+  useEffect(() => {
+    // Fetch postData from Firebase database
+    const unsubscribe = onSnapshot(colRef, (snapshot) => {
+      const postDataArray = snapshot.docs.map((doc) => doc.data());
+      console.log(postDataArray)
+      setPostData(postDataArray);
+    });
+
+    return () => {
+      // Unsubscribe from Firebase snapshot listener when component unmounts
+      unsubscribe();
+    };
+  }, [ ]);
+
 
   // useEffect(() => {
   //   const uniqueCategories = [...new Set(filteredImages.map((image) => extractNameAndCategory(image.filename).category))];
@@ -57,22 +102,33 @@ const Gallery = ({ selectedCategory, categories, setCategories, user, storedImag
       {/* Render the filtered images */}
       <div className="gallery">
         {filteredImages.map((image) => {
-          const { name, category, header,filename } = extractNameAndCategory(image.filename);
-
+          const { name, category, subcategory, header,filename } = extractNameAndCategory(image.filename);
+          const description = addDescriptionToImage(image.filename);
+          console.log(image, description)
           return (
-            // userCredentials === header
-            0 <1 && (
+            // userCredentials === header && 
+            0 < 1 && (
               <div className="image-src" key={image.filename} onClick={() => handleImageClick(image.filename)}>
                 <div className="image-item">
                   <img className="image" src={image.downloadURL} alt={image.filename} />
                 </div>
-                <h4 className="image-category">{category}</h4>
+                <div className="image-category">
+                  <h4>Category: {category}</h4>
+                  <h2 className="image-subCategory">Subcategory: {subcategory}</h2>
+                </div>
                 <h3 className="image-header">{name}</h3>
-                { image.downloadURL && (
-        <div>
-        <a href={image.downloadURL} download>Download Image</a>
-      </div>
-      )}
+                {description && <p className="image-description">{description}</p>}
+                {image.downloadURL && (
+                  <div>
+                    <a href={image.downloadURL} download>
+                      Download Image
+                    </a>
+                  </div>
+                )}
+                <FontAwesomeIcon icon="times" className="cross-icon" style={{ color: 'red', fontSize: '24px' } }    onClick={(e) => {
+                  e.stopPropagation(); // Stop event propagation
+                  handleDelete(image.filename);
+                }}/>
               </div>
             )
           );
