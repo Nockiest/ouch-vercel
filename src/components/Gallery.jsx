@@ -6,20 +6,22 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ref,deleteObject } from "firebase/storage";
 import { onSnapshot, doc, deleteDoc } from "firebase/firestore";
+import SearchBar from "./SearchBar";
 library.add(fas);
 
 const Gallery = ({ fetchImages,selectedCategory, selectedSubCategory,
-  user,  storedImages, handleSubcategories, searchedTerm }) => {
+  user,  storedImages, handleSubcategories, searchedTerm,
+  handleSearch }) => {
   const displayNameWithoutSpaces = user.displayName.replace(/\s/g, '');
   const userCredentials = `${displayNameWithoutSpaces} ${user.email}`;
   const [downloadURL, setDownloadURL] = useState(null);
   const [postData, setPostData] = useState([])
 
   const extractNameAndCategory = (filename) => {
-    // console.log(filename)
+ 
     const nameWithCategory = filename.split('.')[0];
     const parts = nameWithCategory.split('_');
-    // console.log(parts)
+ 
     const name = parts[0].substring(parts[0].indexOf('/') + 1).replace(/%/g, ' ');
     const category = parts[1];
     const subcategory = parts[2]
@@ -35,7 +37,7 @@ const Gallery = ({ fetchImages,selectedCategory, selectedSubCategory,
      return  name.toLowerCase().includes(searchedTerm.toLowerCase());
   });
   const filteredPosts = postData.filter((post) => {
-    console.log(post.category, selectedCategory, post.subcategory, selectedSubCategory);
+    
   
     if (selectedCategory && selectedSubCategory) {
       return post.category === selectedCategory && post.subcategory === selectedSubCategory;
@@ -140,8 +142,9 @@ const Gallery = ({ fetchImages,selectedCategory, selectedSubCategory,
   }, [downloadURL]);
   return (
     <div className="gallery-section">
+      <SearchBar handleSearch={handleSearch} />
       <h2>Gallery</h2>
-      {/* Render the filtered images */}
+      
       <div className="gallery">
         {filteredImages.map((image) => {
           const { name, category, subcategory, header,filename } = extractNameAndCategory(image.filename);

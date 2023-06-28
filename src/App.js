@@ -93,23 +93,25 @@ const App = () => {
 
   const handleSubcategories = (postData, type) => {
     // Extract unique categories or subcategories from the postData
-    
     const extractedItems = postData.map((post) => post[type]);
-    const uniqueItems = extractedItems.filter((item, index, array) => array.indexOf(item) === index)
-    console.log(uniqueItems)
-      if (type === "subcategory" ) {
-      setSubCategories(uniqueItems);
+    const uniqueItems = extractedItems.filter(
+      (item, index, array) => item && array.indexOf(item) === index
+    );
     
-     } else if (type === "category" ) {
+    console.log(uniqueItems);
+  
+    if (type === 'subcategory') {
+      setSubCategories(uniqueItems);
+    } else if (type === 'category') {
       setCategories(uniqueItems);
-      }
+    }
   };
   return (
     <div>
       <Navbar  user={user} setUser={setUser} handleSearch={handleSearch}/> 
       {user && 
       <>
-        <SearchBar handleSearch={handleSearch} /> 
+         
       <section className='main'>
         
         
@@ -137,6 +139,7 @@ const App = () => {
        storedImages={storedImages}
        searchedTerm={searchedTerm}
        handleSubcategories={handleSubcategories}
+       handleSearch={handleSearch}
         />
       </section>
       </>
