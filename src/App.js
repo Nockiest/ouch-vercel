@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Gallery from './components/Gallery';
- 
+import "./App.css"
 import FileSendingForm from './components/Filesendingform';
 import SearchBar from './components/SearchBar';
 import LoginButton from './components/LoginButton';
@@ -19,8 +19,9 @@ const App = () => {
   const [searchedTerm, setSearchedTerm] = useState('');
   const [user, setUser] = useState(null)
   const [categories, setCategories] = useState([])
+  const [subCategories, setSubCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState(null)
- 
+  const [selectedSubCategory, setSelectedSubCategory] = useState(null)
   useEffect(() => {
     fetchImages();
     const storedUserName = localStorage.getItem('name');
@@ -66,7 +67,9 @@ const App = () => {
           imgName,
           user,
           timeStamp: serverTimestamp(),
-          description
+          description,
+          category,
+          subcategory
         });
       };
       await uploadFile(formData); // Add 'await' here
@@ -88,37 +91,55 @@ const App = () => {
     console.log(finalTerm);
   };
 
-
-
+  const handleSubcategories = (postData, type) => {
+    // Extract unique categories or subcategories from the postData
+    
+    const extractedItems = postData.map((post) => post[type]);
+    const uniqueItems = extractedItems.filter((item, index, array) => array.indexOf(item) === index)
+    console.log(uniqueItems)
+      if (type === "subcategory" ) {
+      setSubCategories(uniqueItems);
+    
+     } else if (type === "category" ) {
+      setCategories(uniqueItems);
+      }
+  };
   return (
     <div>
-      <Navbar  user={user} setUser={setUser}/> 
+      <Navbar  user={user} setUser={setUser} handleSearch={handleSearch}/> 
       {user && 
-      <div>
-        <div>
-          <p>{searchedTerm}</p>
+      <>
+        <SearchBar handleSearch={handleSearch} /> 
+      <section className='main'>
+        
+        
+         
+          <div className='left-bar'>
           <FileSendingForm 
           user={user}
           onFileUpload={handleFileUpload}
           />
-          <SearchBar onSearch={handleSearch} />
           <Categories
             setSelectedCategory={setSelectedCategory}
+            setSelectedSubCategory={setSelectedSubCategory}
             selectedCategory={selectedCategory}
+            selectedSubCategory={ selectedSubCategory}
             categories={categories}
+            subCategories={subCategories}
           />
-
         </div>
+         
       <Gallery  
        selectedCategory={selectedCategory}
-        
-       categories={categories} 
-       setCategories={setCategories}
+       selectedSubCategory={selectedSubCategory}
+       fetchImages={fetchImages} 
        user={user}
        storedImages={storedImages}
        searchedTerm={searchedTerm}
+       handleSubcategories={handleSubcategories}
         />
-      </div>
+      </section>
+      </>
       }
     
     </div> 

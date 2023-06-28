@@ -1,34 +1,57 @@
-.form-container {
-    width: 300px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #000;
-    box-sizing: border-box;
+@import "../variables.css"; 
+
+.input-field-row {
+  display: flex;
+  /* width: 337px; */
+  /* padding: 8px 16px; */
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  /* gap: 38px; */
+}
+  
+
+  .input-field-row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
   
-  .form-container h2 {
-    margin-bottom: 10px;
+  .input-field {
+    min-width: 300px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   
-  .form-container label {
-    margin-bottom: 10px;
-  }
-  
-  .form-container input {
-    margin-bottom: 10px;
-  }
-  
-  .form-container button {
-    width: 100%;
-    padding: 10px;
+  .input-field label {
+    /* margin-right: 10px; */
   }
 
+  .input-field input {
+   height:24px;
+  }
+
+  #description {
+    resize: vertical;
+    min-height: 30px;
+    max-height: 150px;
+    min-width: 55%;
+  }
+
+  .preview-image{
+    min-height: 100px;
+    min-width: 150px;
+  }
   .add-form{
     display: flex;
     flex-direction: column;
     border: 1px solid black;
-    max-width: 25%;
-    margin: 16px;
+     /* max-width: 400px;   */
+    margin: 8px;
     padding: 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 38px;
   }
-  
+ 

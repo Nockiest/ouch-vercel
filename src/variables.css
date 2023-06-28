@@ -1,0 +1,39 @@
+:root {
+    --primary-color: #2A45DB;
+    --secondary-color: #3B478F;
+    --tertiary-color: #8F2B09;
+    --character-title-85:  rgba(0, 0, 0, 0.85);
+    --input-width: 337px;
+  }
+
+  h1{
+    font-size: 40px;
+    line-height: 46px;
+  }
+  h2 {
+    font-size: 30px;
+    line-height: 40px;
+  }
+  h3 {
+    color: var(--character-title-85, rgba(0, 0, 0, 0.85));
+    font-size: 24px;
+    line-height: 32px;
+  }
+  h4 {
+    font-size: 20px;
+    line-height: 28px;
+  }
+  h5 {
+    font-size: 14px;
+    line-height: 22px;
+  }
+  h6 {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 22px;
+  }
+  p {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+  }

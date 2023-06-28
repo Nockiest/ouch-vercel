@@ -1,8 +1,18 @@
+.gallery-section {
+  margin-top: 80px;
+  flex-grow: 1;
+}
+.gallery-section > H2 {
+  text-align: center;
+  background-color: rgb(221, 215, 215);
+  margin: 8px 40%;
+}
 .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       /* gap:24px;  */
-   
+   flex-grow: 1;
+    
   }
   .image-src {
     border: 1px solid black;

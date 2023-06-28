@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "./gallery.css";
-import { downloadURLFinder, colRef } from "../firebase";
+import { downloadURLFinder, colRef, db,  storage } from "../firebase";
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-// Add Font Awesome icons to the library
- 
-
+import { ref,deleteObject } from "firebase/storage";
 import { onSnapshot, doc, deleteDoc } from "firebase/firestore";
 library.add(fas);
-const Gallery = ({ selectedCategory, categories, setCategories, user, storedImages, searchedTerm }) => {
+
+const Gallery = ({ fetchImages,selectedCategory, selectedSubCategory,
+  user,  storedImages, handleSubcategories, searchedTerm }) => {
   const displayNameWithoutSpaces = user.displayName.replace(/\s/g, '');
   const userCredentials = `${displayNameWithoutSpaces} ${user.email}`;
   const [downloadURL, setDownloadURL] = useState(null);
@@ -25,18 +24,33 @@ const Gallery = ({ selectedCategory, categories, setCategories, user, storedImag
     const category = parts[1];
     const subcategory = parts[2]
     const header = parts.slice(3).join('_') + '.cz'; // Extract the part after "xyz"
+    
+    
     return { name, category, subcategory, header, filename };
   };
   // Filter the storedImages based on the searched term
   const filteredImages = storedImages.filter((image) => {
     // console.log(storedImages)
     const { name } = extractNameAndCategory(image.filename);
-     return name//  name.toLowerCase().includes(searchedTerm.toLowerCase());
+     return  name.toLowerCase().includes(searchedTerm.toLowerCase());
   });
-
+  const filteredPosts = postData.filter((post) => {
+    console.log(post.category, selectedCategory, post.subcategory, selectedSubCategory);
+  
+    if (selectedCategory && selectedSubCategory) {
+      return post.category === selectedCategory && post.subcategory === selectedSubCategory;
+    } else if (selectedCategory) {
+      return post.category === selectedCategory;
+    } else if (selectedSubCategory) {
+      return post.subcategory === selectedSubCategory;
+    }
+  
+    return true; // Return all posts if no category or subcategory is selected
+  });
+  
   const addDescriptionToImage = (imageName) => {
     const trimmedFilename = imageName.replace(/^.+\//, '')
-    const post = postData.find((post) => post.imgName === trimmedFilename);
+    const post = filteredPosts.find((post) => post.imgName === trimmedFilename);
     return post ? post.description : '';
   };
   const handleImageClick = async (downloadURL) => {
@@ -56,40 +70,68 @@ const Gallery = ({ selectedCategory, categories, setCategories, user, storedImag
       console.error('Error downloading file:', error);
     }
   };
-  const handleDelete = async (filename) => {
-    const trimmedFilename = filename.replace(/^.+\//, '');   // Trim the slash and anything before it
-    // console.log(filename);
-    // Perform the deletion logic here
-    try {
-     
-      console.log(trimmedFilename)
-      // Delete image data from Firebase database using the trimmed filename or any unique identifier
-      await deleteDoc(doc(colRef, trimmedFilename));
-      // Fetch images again after deletion
-      // fetchImages();
-    } catch (error) {
-      console.error('Error deleting image:', error);
+ 
+  const handleDelete = async (image) => {
+    // Find the post in the post list
+    console.log(image)
+    const trimmedFilename = image.filename.replace(/^.+\//, '');
+    console.log(trimmedFilename, postData)
+    const postToDelete = postData.find((post) => post.imgName ===trimmedFilename);
+     console.log(postToDelete, "XYZ")
+    // If the post has an associated image, delete it from Firebase Storage
+    if (postToDelete) {
+      try {
+        const imageRef = ref(storage, `files/${trimmedFilename}`);
+        // console.log(imageRef, "img")
+        await deleteObject(imageRef);
+         
+        console.log(`Image ${trimmedFilename} deleted successfully.`);
+        
+      } catch (error) {
+        console.error('Error deleting image:', error);
+      }
     }
+  
+    // Remove the post from the post list
+    setPostData((prevPostList) =>
+      prevPostList.filter((post) => post.id !== image.id)
+    );
+  
+    try {
+      // Delete the post from Firestore
+      const postRef = doc(db, 'files', postToDelete.id);
+      await deleteDoc(postRef);
+      console.log('Post deleted successfully.');
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+    fetchImages()
   };
+
   useEffect(() => {
     // Fetch postData from Firebase database
     const unsubscribe = onSnapshot(colRef, (snapshot) => {
-      const postDataArray = snapshot.docs.map((doc) => doc.data());
-      console.log(postDataArray)
+      const postDataArray = snapshot.docs.map((doc) => {
+        const postData = doc.data();
+        const postId = doc.id;
+        return { id: postId, ...postData };
+      });
+      console.log(postDataArray);
       setPostData(postDataArray);
     });
-
+  
     return () => {
       // Unsubscribe from Firebase snapshot listener when component unmounts
       unsubscribe();
     };
-  }, [ ]);
+  }, []);
+  
+  useEffect(() => {
+    // Extract unique categories from the postData
+    handleSubcategories(postData, "subcategory")
+    handleSubcategories(postData, "category")
+  }, [postData]);
 
-
-  // useEffect(() => {
-  //   const uniqueCategories = [...new Set(filteredImages.map((image) => extractNameAndCategory(image.filename).category))];
-  //   setCategories(uniqueCategories);
-  // }, [filteredImages]);
   useEffect(() => {
     // Clear the download URL when the component unmounts
     return () => {
@@ -97,14 +139,16 @@ const Gallery = ({ selectedCategory, categories, setCategories, user, storedImag
     };
   }, [downloadURL]);
   return (
-    <div>
+    <div className="gallery-section">
       <h2>Gallery</h2>
       {/* Render the filtered images */}
       <div className="gallery">
         {filteredImages.map((image) => {
           const { name, category, subcategory, header,filename } = extractNameAndCategory(image.filename);
           const description = addDescriptionToImage(image.filename);
-          console.log(image, description)
+          if (!description) {
+            return null; // Skip rendering the image if it doesn't have a description
+          }
           return (
             // userCredentials === header && 
             0 < 1 && (
@@ -127,7 +171,7 @@ const Gallery = ({ selectedCategory, categories, setCategories, user, storedImag
                 )}
                 <FontAwesomeIcon icon="times" className="cross-icon" style={{ color: 'red', fontSize: '24px' } }    onClick={(e) => {
                   e.stopPropagation(); // Stop event propagation
-                  handleDelete(image.filename);
+                  handleDelete(image);
                 }}/>
               </div>
             )

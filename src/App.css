@@ -1,3 +1,20 @@
 .selected-category {
     font-weight: bold;
   }
+ 
+
+  body {
+    color: var(--character-title-85, rgba(0, 0, 0, 0.85));
+    font-family: Roboto;
+    font-weight: 500;
+  }
+  /* typograpfy*/
+ .main {
+  display: flex;
+  justify-content: row;
+ }
+
+ .left-bar {
+  background-color: lightgray;
+  max-width: 375px;
+ }

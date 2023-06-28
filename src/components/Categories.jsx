@@ -1,24 +1,60 @@
 import React from 'react'
-
-const Categories = ({ selectedCategory, setSelectedCategory, categories }) => {
-    const handleCategoryClick = (category) => {
+import "./categories.css"
+const Categories = ({
+  selectedCategory,
+  setSelectedCategory,
+  categories,
+  subCategories,
+  selectedSubCategory,
+  setSelectedSubCategory,
+}) => {
+  const handleCategoryClick = (category) => {
+    if (selectedCategory === category) {
+      setSelectedCategory(null); // Set to null if already selected
+    } else {
       setSelectedCategory(category);
-      console.log(selectedCategory)
-    };
-  
-    return (
-      <div>
-        {categories.map((category, index) => (
-          <div
-            key={index}
-            onClick={() => handleCategoryClick(category)}
-            className={selectedCategory === category ? 'selected-category' : ''}
-          >
-            {category}
-          </div>
-        ))}
-      </div>
-    );
+    }
   };
-  
-  export default Categories;
+
+  const handleSubCategoryClick = (subCategory) => {
+    if (selectedSubCategory === subCategory) {
+      setSelectedSubCategory(null); // Set to null if already selected
+    } else {
+      setSelectedSubCategory(subCategory);
+    }
+  };
+
+  console.log('Categories:', categories);
+  console.log('Subcategories:', subCategories);
+
+  return (
+    <div className="categories-section">
+      <div> 
+      CATEGORY
+      {categories.map((category, index) => (
+        <li
+          key={index}
+          onClick={() => handleCategoryClick(category)}
+          className={selectedCategory === category ? 'selected-category' : ''}
+        >
+          {category}
+        </li>
+      ))}
+      </div>
+      <div>
+      SUBCATEGORY
+      {subCategories.map((subCategory, index) => (
+        <li
+          key={index}
+          onClick={() => handleSubCategoryClick(subCategory)}
+          className={selectedSubCategory === subCategory ? 'selected-category' : ''}
+        >
+          {subCategory}
+        </li>
+      ))}
+      </div>
+    </div>
+  );
+};
+
+export default Categories;

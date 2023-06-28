@@ -1,0 +1,21 @@
+@import "../variables.css";
+ 
+.categories-section{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.categories-section > * {
+    border: 1px solid black;
+    min-width:30%;
+    background-color: white;
+    padding: 16px;
+}
+.selected-category{
+    background-color: var(--primary-color);
+}
+
+
+li {
+    margin-top: 4px;
+}
