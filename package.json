@@ -4,7 +4,6 @@
   "proxy": "http://localhost:5000",
   "private": true,
   "dependencies": {
-    "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@tanstack/react-query-devtools": "^4.29.15",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
