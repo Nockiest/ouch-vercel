@@ -6,9 +6,6 @@ import FileSendingForm from './components/Filesendingform';
 import SearchBar from './components/SearchBar';
 import LoginButton from './components/LoginButton';
 import Navbar from './components/Navbar';
-// import { fas } from '@fortawesome/free-solid-svg-icons';
-  // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-  // import { library } from '@fortawesome/fontawesome-svg-core';
 import Categories from './components/Categories';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
  import { storage, colRef } from './firebase';
@@ -132,7 +129,7 @@ const App = () => {
           />
         </div>
          
-      <Gallery  
+      {/* <Gallery  
        selectedCategory={selectedCategory}
        selectedSubCategory={selectedSubCategory}
        fetchImages={fetchImages} 
@@ -141,7 +138,7 @@ const App = () => {
        searchedTerm={searchedTerm}
        handleSubcategories={handleSubcategories}
        handleSearch={handleSearch}
-        />
+        /> */}
       </section>
       </>
       }
