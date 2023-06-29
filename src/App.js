@@ -6,7 +6,7 @@ import FileSendingForm from './components/Filesendingform';
 import SearchBar from './components/SearchBar';
 import LoginButton from './components/LoginButton';
 import Navbar from './components/Navbar';
-import { fas } from '@fortawesome/free-solid-svg-icons';
+// import { fas } from '@fortawesome/free-solid-svg-icons';
   // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
   // import { library } from '@fortawesome/fontawesome-svg-core';
 import Categories from './components/Categories';
