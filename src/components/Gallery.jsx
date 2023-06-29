@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./gallery.css";
 import { downloadURLFinder, colRef, db,  storage } from "../firebase";
 // import { library } from '@fortawesome/fontawesome-svg-core';
-import { fas } from '@fortawesome/free-solid-svg-icons';
+// import { fas } from '@fortawesome/free-solid-svg-icons';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ref,deleteObject } from "firebase/storage";
 import { onSnapshot, doc, deleteDoc } from "firebase/firestore";
@@ -154,8 +154,7 @@ const Gallery = ({ fetchImages,selectedCategory, selectedSubCategory,
             return null; // Skip rendering the image if it doesn't have a description
           }
           return (
-            // userCredentials === header && 
-            0 < 1 && (
+             userCredentials === header &&  (
               <div className="image-src" key={image.filename} onClick={() => handleImageClick(image.filename)}>
                 <div className="image-item">
                   <img className="image" src={image.downloadURL} alt={image.filename} />
