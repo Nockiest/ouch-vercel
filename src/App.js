@@ -33,7 +33,7 @@ const App = () => {
   }, []);
    
   const fetchImages = () => {
-    fetch('/gallery')
+    fetch('https://node-file-managment-app-2.onrender.com/gallery')
       .then((response) => response.json())
       .then((data) => {
         const images = data.map((file) => ({
