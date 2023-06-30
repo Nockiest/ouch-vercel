@@ -154,8 +154,8 @@ const Gallery = ({ fetchImages,selectedCategory, selectedSubCategory,
             return null; // Skip rendering the image if it doesn't have a description
           }
           return (
-             userCredentials === header &&  (
-              <div className="image-src" key={image.filename} onClick={() => handleImageClick(image.filename)}>
+            // userCredentials === header &&  (
+             0<1 && ( <div className="image-src" key={image.filename} onClick={() => handleImageClick(image.filename)}>
                 <div className="image-item">
                   <img className="image" src={image.downloadURL} alt={image.filename} />
                 </div>
