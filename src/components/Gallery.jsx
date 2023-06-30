@@ -150,12 +150,12 @@ const Gallery = ({ fetchImages,selectedCategory, selectedSubCategory,
         {filteredImages.map((image) => {
           const { name, category, subcategory, header,filename } = extractNameAndCategory(image.filename);
           const description = addDescriptionToImage(image.filename);
+          console.log( userCredentials === header, userCredentials,header)
           if (!description) {
             return null; // Skip rendering the image if it doesn't have a description
           }
           return (
-            // userCredentials === header &&  (
-             0<1 && ( <div className="image-src" key={image.filename} onClick={() => handleImageClick(image.filename)}>
+              userCredentials === header &&  ( <div className="image-src" key={image.filename} onClick={() => handleImageClick(image.filename)}>
                 <div className="image-item">
                   <img className="image" src={image.downloadURL} alt={image.filename} />
                 </div>
