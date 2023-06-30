@@ -129,7 +129,7 @@ const App = () => {
           />
         </div>
          
-      {/* <Gallery  
+      <Gallery  
        selectedCategory={selectedCategory}
        selectedSubCategory={selectedSubCategory}
        fetchImages={fetchImages} 
@@ -138,7 +138,7 @@ const App = () => {
        searchedTerm={searchedTerm}
        handleSubcategories={handleSubcategories}
        handleSearch={handleSearch}
-        /> */}
+        />
       </section>
       </>
       }
