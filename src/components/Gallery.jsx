@@ -150,7 +150,7 @@ const Gallery = ({ fetchImages,selectedCategory, selectedSubCategory,
         {filteredImages.map((image) => {
           const { name, category, subcategory, header,filename } = extractNameAndCategory(image.filename);
           const description = addDescriptionToImage(image.filename);
-          console.log( userCredentials === header, userCredentials,header)
+          console.log(  userCredentials.replace(/\s/g, '') ===  header.replace(/\s/g, ''),  userCredentials.replace(/\s/g, '') , header.replace(/\s/g, ''))
           if (!description) {
             return null; // Skip rendering the image if it doesn't have a description
           }
