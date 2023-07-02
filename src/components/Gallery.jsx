@@ -26,7 +26,7 @@ const Gallery = ({ fetchImages,selectedCategory, selectedSubCategory,
     const name = parts[0].substring(parts[0].indexOf('/') + 1).replace(/%/g, ' ');
     const category = parts[1];
     const subcategory = parts[2]
-    const header = parts.slice(3).join('_') + '.cz'; // Extract the part after "xyz"
+    const header = parts[3] //parts.slice(3).join('_') + '.cz'; // Extract the part after "xyz"
     
     
     return { name, category, subcategory, header, filename };
@@ -150,14 +150,14 @@ const Gallery = ({ fetchImages,selectedCategory, selectedSubCategory,
         {filteredImages.map((image) => {
           const { name, category, subcategory, header,filename } = extractNameAndCategory(image.filename);
           const description = addDescriptionToImage(image.filename);
-          console.log(  userCredentials.replace(/\s/g, '') ===  header.replace(/\s/g, ''),  userCredentials.replace(/\s/g, '') , header.replace(/\s/g, ''))
-          if (!description) {
-            return null; // Skip rendering the image if it doesn't have a description
-          }
+        console.log(  header === "OndřejLukeš", header)
+          // console.log(  userCredentials.replace(/\s/g, '') ===  header.replace(/\s/g, ''),  userCredentials.replace(/\s/g, '') , header.replace(/\s/g, ''))
+          
           return (
-            userCredentials.replace(/\s/g, '') ===  header.replace(/\s/g, '')&&  ( <div className="image-src" key={image.filename} onClick={() => handleImageClick(image.filename)}>
+            // userCredentials.replace(/\s/g, '') ===  header.replace(/\s/g, '')
+            header === "OndřejLukeš" &&  ( <div className="image-src" key={filename} onClick={() => handleImageClick(filename)}>
                 <div className="image-item">
-                  <img className="image" src={image.downloadURL} alt={image.filename} />
+                  <img className="image" src={image.downloadURL} alt={filename} />
                 </div>
                 <div className="image-category">
                   <h4>Category: {category}</h4>
@@ -176,10 +176,6 @@ const Gallery = ({ fetchImages,selectedCategory, selectedSubCategory,
                   e.stopPropagation(); // Stop event propagation
                   handleDelete(image);
                 }} />
-                {/* <FontAwesomeIcon icon="times" className="cross-icon" style={{ color: 'red', fontSize: '24px' } }    onClick={(e) => {
-                  e.stopPropagation(); // Stop event propagation
-                  handleDelete(image);
-                }}/> */}
               </div>
             )
           );

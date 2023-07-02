@@ -29,6 +29,7 @@ const FileSendingForm = ({ onFileUpload, user }) => {
       imagePreviewRef.current.src = e.target.result;
     };
     reader.readAsDataURL(fileList[0]);
+    console.log(fileList)
   };
 
   const handleSubmit = async (event) => {
@@ -138,10 +139,11 @@ const FileSendingForm = ({ onFileUpload, user }) => {
     )}
   </div>
       <div>
-        <input
+          <input
           type="file"
           onChange={handleFileChange}
           ref={fileInputRef}
+          multiple  // Add 'multiple' attribute to allow selecting multiple files
         />
       </div>
       <input type="submit" value="Upload" />
