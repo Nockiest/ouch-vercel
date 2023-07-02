@@ -11,7 +11,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
  import { storage, colRef } from './firebase';
 import {serverTimestamp, addDoc, collection } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
-
+ 
 const App = () => {
   const [storedImages, setStoredImages] = useState([]);
   const [searchedTerm, setSearchedTerm] = useState('');
@@ -47,32 +47,33 @@ const App = () => {
 
   const handleFileUpload = async (formData) => {
     try {
-      const uploadFile = async (formData) => { // Add 'async' here
-      //  console.log(user);
-        const { filename, user, description, category, subcategory,imageUpload } = formData;
+      const uploadFile = async (fileData) => {
+        const { filename, user, description, category, subcategory, imageUpload } = fileData.formData;
         const augmentedCategory = category || "default";
-     console.log(user)
-        const imgName = `${filename}_${augmentedCategory}_${subcategory}_${user}_${uuidv4()}`;
-        console.log(imgName);
-        const filesRef = ref(storage, `files/${imgName}`);
+        console.log( fileData.files )
+        for (const file of fileData.files) {
+          const imgName = `${filename}_${augmentedCategory}_${subcategory}_${user}_${uuidv4()}`;
+          const filesRef = ref(storage, `files/${imgName}`);
   
-        await uploadBytes(filesRef, imageUpload).then((snapshot) => {
-          getDownloadURL(snapshot.ref).then((url) => {
-            console.log(url);
+          await uploadBytes(filesRef, file).then((snapshot) => {
+            getDownloadURL(snapshot.ref).then((url) => {
+              console.log(url);
+            });
           });
-        });
-        await addDoc(colRef, { // Add 'await' here
-          imgName,
-          user,
-          timeStamp: serverTimestamp(),
-          description,
-          category,
-          subcategory
-        });
+          await addDoc(colRef, {
+            imgName,
+            user,
+            timeStamp: serverTimestamp(),
+            description,
+            category,
+            subcategory,
+          });
+        }
       };
-      await uploadFile(formData); // Add 'await' here
   
-      fetchImages(); // Fetch images again after successful upload
+      await uploadFile(formData);
+  
+      fetchImages();
     } catch (error) {
       console.error('Error uploading file:', error);
       // Handle the error, display an error message, etc.
