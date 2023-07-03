@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./gallery.css";
 import { downloadURLFinder, colRef, db,  storage } from "../firebase";
-// import { library } from '@fortawesome/fontawesome-svg-core';
-// import { fas } from '@fortawesome/free-solid-svg-icons';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ref,deleteObject } from "firebase/storage";
 import { onSnapshot, doc, deleteDoc } from "firebase/firestore";
 import SearchBar from "./SearchBar";
 import deleteLeftIcon from "../svg/delete-left-solid.svg"
-// library.add(fas);
-
+ 
 const Gallery = ({ fetchImages,selectedCategory, selectedSubCategory,
   user,  storedImages, handleSubcategories, searchedTerm,
   handleSearch }) => {

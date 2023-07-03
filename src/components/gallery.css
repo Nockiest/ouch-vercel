@@ -1,17 +1,24 @@
 .gallery-section {
   flex-grow: 1;
+ flex-shrink: 1;
 }
 .gallery-section > H2 {
   text-align: center;
   background-color: rgb(221, 215, 215);
   margin: 8px 40%;
+  min-width: 100px;
+   
 }
 .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      
    flex-grow: 1;
-    
+   flex-shrink: 1;
+  }
+  @media (max-width: 767px) {
+    .gallery {
+      grid-template-columns: 100%; /* Display as a single column on mobile phones */
+    }
   }
   .image-src {
     border: 1px solid black;

@@ -120,14 +120,14 @@ const App = () => {
           user={user}
           onFileUpload={handleFileUpload}
           />
-          <Categories
+          {/* <Categories
             setSelectedCategory={setSelectedCategory}
             setSelectedSubCategory={setSelectedSubCategory}
             selectedCategory={selectedCategory}
             selectedSubCategory={ selectedSubCategory}
             categories={categories}
             subCategories={subCategories}
-          />
+          /> */}
         </div>
          
       <Gallery  
